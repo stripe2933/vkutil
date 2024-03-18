@@ -78,7 +78,9 @@ target_link_libraries(vkutil PUBLIC
 if (VKUTIL_USE_GLFW_WINDOW)
     target_sources(vkutil PUBLIC
         FILE_SET CXX_MODULES
-        FILES ${PROJECT_SOURCE_DIR}/interface/window.cppm
+        BASE_DIRS interface
+        FILES
+            interface/window.cppm
     )
     target_link_libraries(vkutil PUBLIC
         glfw
