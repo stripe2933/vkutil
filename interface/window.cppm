@@ -6,8 +6,8 @@ module;
 export module vkutil:window;
 
 import std;
-import glm;
-import vulkan_hpp;
+export import glm;
+export import vulkan_hpp;
 
 export namespace vkutil {
     struct GlfwWindow {
