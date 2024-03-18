@@ -9,6 +9,8 @@ project(vkutil
 # CMake options.
 # ----------------
 
+option(VKUTIL_USE_GLFW_WINDOW "Use GLFW window")
+
 if (NOT DEFINED VKUTIL_VK_VERSION)
     set(VKUTIL_VK_VERSION 1000000)
 endif()
@@ -25,6 +27,11 @@ include(cmake/CompileVulkanShader.cmake)
 
 find_package(Vulkan REQUIRED)
 
+if (VKUTIL_USE_GLFW_WINDOW)
+    find_package(GLFW3 REQUIRED)
+    find_package(glm CONFIG REQUIRED)
+endif()
+
 # ----------------
 # Module configurations for external dependencies.
 # ----------------
@@ -33,6 +40,13 @@ file(DOWNLOAD https://raw.githubusercontent.com/stripe2933/Cpp20Module/main/Vulk
     ${PROJECT_BINARY_DIR}/Vulkan.cmake
 )
 include(${PROJECT_BINARY_DIR}/Vulkan.cmake)
+
+if (VKUTIL_USE_GLFW_WINDOW)
+    file(DOWNLOAD https://raw.githubusercontent.com/stripe2933/Cpp20Module/main/glm.cmake
+        ${PROJECT_BINARY_DIR}/glm.cmake
+    )
+    include(${PROJECT_BINARY_DIR}/glm.cmake)
+endif()
 
 # ----------------
 # Project libraries.
@@ -60,3 +74,18 @@ target_sources(vkutil PUBLIC
 target_link_libraries(vkutil PUBLIC
     VulkanHppModule
 )
+
+if (VKUTIL_USE_GLFW_WINDOW)
+    target_sources(vkutil PUBLIC
+        FILE_SET CXX_MODULES
+        FILES ${PROJECT_SOURCE_DIR}/interface/window.cppm
+    )
+    target_link_libraries(vkutil PUBLIC
+        glfw
+        glm::module
+    )
+    target_compile_definitions(vkutil PRIVATE
+        VKUTIL_USE_GLFW_WINDOW
+        GLFW_INCLUDE_NONE
+    )
+endif()
